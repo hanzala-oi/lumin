@@ -1,20 +1,32 @@
+document.addEventListener("DOMContentLoaded", () => {
+  const scrollContainer = document.getElementById("scrollContainer");
+  let currentIndex = 0;
+  const images = scrollContainer.querySelectorAll(".scroll-image");
+  const totalImages = images.length;
 
-  document.addEventListener('DOMContentLoaded', () => {
-      const scrollContainer = document.getElementById('scrollContainer');
-      const images = scrollContainer.getElementsByClassName('scroll-image');
-      const windowHeight = window.innerHeight;
+  function updateVisibility() {
+    images.forEach((img, index) => {
+      img.style.display = index === currentIndex ? "block" : "none";
+    });
+  }
 
-      window.addEventListener('scroll', () => {
-          const scrollPosition = window.scrollY;
+  scrollContainer.addEventListener("wheel", (evt) => {
+    evt.preventDefault();
 
-          Array.from(images).forEach((img, index) => {
-              const imageOffset = index * windowHeight * 0.5;
-
-              if (scrollPosition > imageOffset - windowHeight && scrollPosition < imageOffset + windowHeight) {
-                  img.classList.add('visible');
-              } else {
-                  img.classList.remove('visible');
-              }
-          });
-      });
+    if (evt.deltaY > 0) {
+      // Scroll to the right
+      if (currentIndex < totalImages - 1) {
+        currentIndex++;
+        updateVisibility();
+      } else {
+        window.scrollBy(0, evt.deltaY);
+      }
+    } else {
+      // Scroll to the left (disable backward scrolling)
+      window.scrollBy(0, evt.deltaY);
+    }
   });
+
+  // Initial visibility
+  updateVisibility();
+});
